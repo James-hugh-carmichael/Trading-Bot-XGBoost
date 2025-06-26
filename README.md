@@ -43,11 +43,10 @@ Verify connectivity
 Before running the bot, ensure you can connect and authenticate with Alpaca via a simple test script or your trading bot's initial connection.
 
 > Running the Bot
+Run the data loader and data processor, then run the ML model generators. 
 
 Run the trading bot main script:
-
 python main.py
-
 Logs will be written to bot.log and executed trades will be recorded in trade_log.csv.
 
 > Repository Structure
