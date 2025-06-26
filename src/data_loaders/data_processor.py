@@ -7,14 +7,58 @@ from ta.trend import MACD
 from ta.volatility import BollingerBands
 from ta.volume import OnBalanceVolumeIndicator
 
-RAW_DATA_DIR = "data/dataraw_unseen"
-PROCESSED_DATA_DIR = "data/unseen_dataprocessed"
-os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
+"""
+Stock Data Preprocessing Pipeline for Machine Learning (Seen & Unseen Data)
+
+This script transforms raw, minute-level stock price data into a feature-rich dataset suitable for use in machine learning models. It supports processing both **training (seen)** and **prediction (unseen)** data
+
+Key Functionality:
+------------------
+- Reads raw `.parquet` files 
+- Outputs a processed `.parquet` file to the desired output path. (will need to be specified in the script)
+- Automatically generates technical indicators, statistical features, and classification/regression targets.
+
+Features Engineered:
+--------------------
+1. **Return Features**:
+   - 1-minute percent return (`return_1m`)
+   - 1-minute log return (`log_return`)
+   - Rolling returns and statistics (mean, std) over windows of 5–390 minutes
+
+2. **Lag Features**:
+   - Previous close prices for 1 to 5 minutes (`lag_close_1` to `lag_close_5`)
+
+3. **Technical Indicators**:
+   - RSI, MACD
+   - Bollinger Band high and low values
+   - On-Balance Volume (OBV)
+
+4. **Time-Based Features**:
+   - Minute of hour, hour of day, and day of week
+
+5. **Targets**:
+   - `target`: Binary label (1 if return over `LOOKAHEAD_MINUTES` > `THRESHOLD`)
+   - `target_return`: Actual future return over that period
+
+Constants:
+----------
+- `LOOKAHEAD_MINUTES = 60`: Horizon for target calculation.
+- `THRESHOLD = 0.002`: Minimum future return required to classify as a positive target.
+- `RAW_DATA_DIR 
+- `PROCESSED_DATA_DIR 
+"""
+
+import os
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
+from ta.momentum import RSIIndicator
+from ta.trend import MACD
+from ta.volatility import BollingerBands
+from ta.volume import OnBalanceVolumeIndicator
 
 LOOKAHEAD_MINUTES = 60  
 THRESHOLD = 0.002 
-
-OUTPUT_FILE = os.path.join(PROCESSED_DATA_DIR, "training_data.parquet")
 
 def process_symbol(symbol, path):
     df = pd.read_parquet(path)
@@ -58,19 +102,31 @@ def process_symbol(symbol, path):
     return df
 
 
-def main():
+def process_data(raw_data_dir, output_file):
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
     all_dfs = []
-    for filename in tqdm(os.listdir(RAW_DATA_DIR)):
+    for filename in tqdm(os.listdir(raw_data_dir)):
         if filename.endswith(".parquet"):
             symbol = filename.replace(".parquet", "")
-            path = os.path.join(RAW_DATA_DIR, filename)
+            path = os.path.join(raw_data_dir, filename)
             df = process_symbol(symbol, path)
             all_dfs.append(df)
 
     full_df = pd.concat(all_dfs)
-    full_df.to_parquet(OUTPUT_FILE)
-    print(f"Saved processed training data to {OUTPUT_FILE} with {len(full_df)} rows.")
+    full_df.to_parquet(output_file)
+    print(f"Saved processed data to {output_file} with {len(full_df)} rows.")
 
 
 if __name__ == "__main__":
-    main()
+    # Example usage:
+    # For unseen data
+    process_data(
+        raw_data_dir="data/dataraw_unseen",
+        output_file="data/unseen_dataprocessed/training_data.parquet"
+    )
+    
+    # For seen data
+    process_data(
+        raw_data_dir="data/dataraw",
+        output_file="data/dataprocessed/training_data.parquet"
+    )

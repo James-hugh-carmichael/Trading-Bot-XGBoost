@@ -5,6 +5,46 @@ from sklearn.metrics import mean_absolute_error, r2_score
 import joblib
 import os
 
+"""
+XGBoost Regressor Training Script for Predicting Target Returns
+
+This script trains and evaluates XGBoost regression models to predict the `target_return` — a continuous value representing the future return of an asset — using historical features engineered from market data.
+
+Main Workflow:
+--------------
+1. Loads preprocessed data from a Parquet file (`training_data.parquet`).
+2. Defines feature columns (excluding label columns, symbol, and future-close leakage).
+3. Applies quantile filtering to exclude extreme outliers in the target variable.
+4. Splits filtered data chronologically into training and testing sets.
+5. Trains multiple XGBoost regression models with different learning rates.
+6. Evaluates models using:
+    - Mean Absolute Error (MAE)
+    - R² Score
+7. Saves all models and identifies the best one based on MAE.
+
+Key Parameters:
+---------------
+- Quantile Cutoffs: Used to limit training data to a specific return range (e.g., 0.065th to 95th percentile)
+- Model: `xgb.XGBRegressor` with 200 estimators, max depth 6, and 80% subsample
+- Metrics: `mean_absolute_error`, `r2_score` from `sklearn`
+- Output Directory: All models saved under `models/`
+
+File I/O:
+---------
+- Input: `data/dataprocessed/training_data.parquet`
+- Output:
+    - All trained models: `models/xgb_regressor_lr_<lr>_q_<lower>_<upper>.pkl`
+    - Best model: `models/best_xgb_regressor.pkl`
+
+Dependencies:
+-------------
+- pandas
+- xgboost
+- scikit-learn
+- joblib
+- parquet support (pyarrow or fastparquet)
+"""
+
 # Load processed data
 df = pd.read_parquet("data/dataprocessed/training_data.parquet")
 

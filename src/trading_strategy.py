@@ -6,6 +6,28 @@ from ta.trend import MACD
 from ta.volatility import BollingerBands
 from ta.volume import OnBalanceVolumeIndicator
 
+"""
+Feature Engineering Script for Stock Price Data
+
+This script defines a function `build_features(df)` that takes a stock price DataFrame with columns 
+['open', 'high', 'low', 'close', 'volume'] and returns the DataFrame with added engineered features 
+
+Features included:
+- **VWAP** (Volume Weighted Average Price)
+- **Returns**: 1-minute percentage return and log return
+- **Rolling statistics**: Moving average, standard deviation, and returns over multiple window sizes (5, 10, 30, 60, 120, 390 minutes)
+- **Lag features**: Previous 5-minute close prices
+- **Technical indicators**:
+    - RSI (Relative Strength Index)
+    - MACD (Moving Average Convergence Divergence) and Signal Line
+    - Bollinger Bands (Upper and Lower Bands)
+    - OBV (On-Balance Volume)
+- **Time-based features**: Minute, hour, and day of the week
+- **Trade count proxy**: Count of close price changes in a 5-minute rolling window, used as a proxy for activity
+
+This feature set is suitable for feeding into regression or classification models for high-frequency or intraday trading.
+"""
+
 def build_features(df):
     # VWAP calculation
     df['vwap'] = (df['close'] * df['volume']).cumsum() / df['volume'].cumsum()

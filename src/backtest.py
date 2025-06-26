@@ -2,6 +2,46 @@ import pandas as pd
 import numpy as np
 import joblib
 
+"""
+Backtesting Script for ML-Based Trading Strategy
+
+This script simulates historical performance of a stock trading strategy using two machine learning models:
+- A binary classifier (for trade direction probability)
+- A regression model (for expected return prediction)
+
+Key Logic:
+-----------
+- **Long Entry**: classifier probability > 0.58 and predicted return > 0.002
+- **Short Entry**: classifier probability < 0.25 and predicted return < -0.0065
+- **Exit Conditions**:
+    - Stop loss: 6%
+    - Take profit: 10%
+    - Signal reversal (based on opposing model predictions)
+
+Capital & Positioning:
+-----------------------
+- Initial capital: $100
+- Capital per trade: 20% of current available capital
+- Tracks multiple simultaneous positions and updates remaining capital accordingly
+
+Outputs:
+--------
+- Trade-by-trade log including entry/exit price, direction, return, reason, and P/L
+- Win rate and average return
+- Final capital and overall return
+- Equity curve plotted using cumulative capital over time
+
+Dependencies:
+-------------
+- Requires pre-trained models: `best_xgb_classifier.pkl`, `best_xgb_regressor.pkl`
+- Input data: preprocessed historical data in `data/unseen_dataprocessed/training_data.parquet`
+- Uses `build_features()` logic already integrated into the input data
+
+Purpose:
+--------
+Evaluate model performance on unseen historical data to inform real-time deployment readiness.
+"""
+
 df = pd.read_parquet("data/unseen_dataprocessed/training_data.parquet")
 
 # Load models

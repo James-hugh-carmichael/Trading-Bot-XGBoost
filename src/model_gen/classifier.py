@@ -5,6 +5,43 @@ from sklearn.metrics import classification_report, accuracy_score
 import joblib
 import os
 
+"""
+XGBoost Classifier Training Script for Financial Market Prediction
+
+This script trains and evaluates multiple XGBoost classification models using labeled financial market data.
+The goal is to predict the `target` variable — typically a directional signal (e.g., buy/sell/hold) — based on engineered features.
+
+Main Workflow:
+--------------
+1. Loads preprocessed training data from a Parquet file (`training_data.parquet`).
+2. Selects relevant feature columns (excludes metadata and target-related columns).
+3. Splits data chronologically (no shuffle) into training and testing sets.
+4. Trains multiple XGBoost models with varying learning rates.
+5. Evaluates models using:
+    - Accuracy on "confident" predictions (proba > 0.7 or < 0.3)
+    - Full classification report on all test samples
+6. Saves all models and identifies the best one based on confident prediction accuracy.
+
+Key Components:
+---------------
+- Model: `xgb.XGBClassifier` (100 trees, depth 6, 80% subsample)
+- Confidence filtering: Only evaluate predictions with high probability to reduce noise
+- Metrics: `accuracy_score`, `classification_report` from `sklearn`
+- Model persistence: Saved as `.pkl` files using `joblib` in the `models/` directory
+
+Directory Requirements:
+-----------------------
+- Input: `data/dataprocessed/training_data.parquet`
+- Output: `models/best_xgb_classifier.pkl` and other models for each learning rate
+
+Dependencies:
+-------------
+- pandas
+- xgboost
+- scikit-learn
+- joblib
+- parquet file support (e.g., pyarrow or fastparquet)
+"""
 # Load processed data
 df = pd.read_parquet("data/dataprocessed/training_data.parquet")
 

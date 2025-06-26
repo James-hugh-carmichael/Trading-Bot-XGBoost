@@ -3,6 +3,34 @@ import joblib
 import numpy as np
 import matplotlib.pyplot as plt
 
+"""
+Model Evaluation and Strategy Simulation for Stock Price Predictions
+
+This script performs feature importance analysis, prediction, and backtest-like evaluation 
+using pre-trained classification and regression models for stock trading decisions.
+
+Key Components:
+- **Data Loading**: Loads preprocessed training data and extracts relevant features
+- **Model Loading**: Loads pre-trained XGBoost classifier and regressor models from disk
+- **Feature Importance**: Visualizes the top features for both models based on gain importance
+- **Prediction Logic**:
+    - Classifier outputs probability of positive return
+    - Regressor predicts expected future return
+- **Trade Signal Logic**:
+    - **Long entry**: Classifier probability > 0.58 AND Regressor prediction > 0.002
+    - **Short entry**: Classifier probability < 0.25 AND Regressor prediction < -0.0065
+- **Performance Metrics**:
+    - Number of long, short, and total trades
+    - Average predicted and actual (adjusted) returns
+    - Win rate based on trade profitability
+- **Visualization**:
+    - Cumulative return curve for selected trades
+    - Distribution of classifier probabilities and regression predictions with thresholds
+
+This script is designed to assess how well the combined classifier-regressor model performs 
+when both agree on trade direction, simulating a basic long/short trading strategy.
+"""
+
 # Load data
 df = pd.read_parquet("data/dataprocessed/training_data.parquet")
 features = [
@@ -59,7 +87,7 @@ long_reg_mask = reg_preds > reg_threshold
 long_mask = long_clf_mask & long_reg_mask
 
 # Short trade conditions 
-short_clf_mask = clf_probs < 0.23
+short_clf_mask = clf_probs < 0.25
 short_reg_mask = reg_preds < -0.0065
 short_mask = short_clf_mask & short_reg_mask
 

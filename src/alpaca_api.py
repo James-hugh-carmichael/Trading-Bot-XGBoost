@@ -9,6 +9,46 @@ from alpaca.data.timeframe import TimeFrame
 from alpaca.data.enums import DataFeed
 from src.trading_strategy import build_features
 
+"""
+Alpaca Trading Utility & Data Client
+
+This script defines the `User_Actions` class, which provides a unified interface for interacting with the Alpaca trading API
+(paper trading environment) and fetching market data via yfinance as a fallback.
+
+Main Features:
+--------------
+- Connects to Alpaca using API credentials for account management and order placement.
+- Retrieves account status, equity, buying power, and positions.
+- Supports watchlist creation and retrieval.
+- Fetches real-time and historical price data using:
+    - `yfinance` for 1-minute and daily intervals
+    - Custom feature engineering via `build_features(df)`
+- Supports placing and closing orders (market by default).
+- Includes fallback to yfinance when Alpaca data access is restricted (e.g., sandbox mode or rate limits).
+
+Key Methods:
+------------
+- `get_account_info()` – Returns account status, equity, and buying power
+- `get_positions()` – Lists current open positions
+- `get_prices()` – Fetches latest prices from yfinance for given tickers
+- `get_historical_data()` – Returns a DataFrame of historical intraday or daily price data with features
+- `submit_order()` – Places buy/sell orders via Alpaca API
+- `close_position()` – Closes a specific position
+- `close_all_positions()` – Closes all open positions
+- `is_market_open()` – Checks whether the US market is open
+- `get_watchlist_symbols()` – Returns a predefined list of tech/growth stocks used as a universe
+
+Requirements:
+-------------
+- Alpaca keys and endpoint configuration in `src/keys/paper_config.py`
+- Custom feature generation logic in `src/trading_strategy.py` (function: `build_features`)
+- `alpaca_trade_api`, `yfinance`, and `pandas` libraries
+
+Purpose:
+--------
+Provides core trading functions and data acquisition for real-time or backtest-integrated trading scripts.
+This module is intended to be imported and used by strategy scripts or trading loops.
+"""
 
 api = tradeapi.REST(API_KEY, SECRET_KEY, BASE_URL, api_version='v2')
 

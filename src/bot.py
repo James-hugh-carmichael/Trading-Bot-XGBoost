@@ -5,6 +5,44 @@ import logging
 from src.alpaca_api import User_Actions
 from src.trading_strategy import build_features
 
+"""
+Live Trading Bot for Alpaca Using Classifier + Regressor Strategy
+
+This script executes a fully automated stock trading bot integrated with Alpaca's API.
+It uses machine learning models (a classifier and a regressor) to decide when to enter 
+and exit long/short positions based on real-time 1-minute stock data.
+
+Key Features:
+- **Model-based Strategy**:
+    - **Long Entry**: Classifier probability > 0.58 AND Regressor return > 0.002
+    - **Short Entry**: Classifier probability < 0.25 AND Regressor return < -0.0065
+- **Risk Management**:
+    - Stop Loss: 6%
+    - Take Profit: 10%
+    - Position Sizing: 10% of available cash per trade
+    - Maximum number of simultaneous trades (default: 1000)
+    - Optional cooldown period after exiting a trade
+- **Logging & Monitoring**:
+    - Trades logged to a CSV file (`trade_log.csv`)
+    - Bot activity logged to a file (`bot.log`)
+    - Errors caught and logged with retry after delay
+- **Data Pipeline**:
+    - Live prices, positions, and historical OHLCV data fetched from Alpaca
+    - Feature engineering using the same `build_features` method from training
+    - Real-time predictions using loaded XGBoost models
+- **Structure**:
+    - Entry and exit logic executed in a continuous loop (every 60 seconds)
+    - Ensures market is open before executing
+    - Handles exceptions gracefully to maintain uptime
+
+This script is designed for running in a production or paper trading environment 
+and assumes the presence of:
+- `User_Actions` class for interacting with Alpaca API
+- Pre-trained classifier and regressor models
+- A feature builder function (`build_features`) compatible with your model inputs
+"""
+
+
 actions = User_Actions()
 
 # --- Config ---
