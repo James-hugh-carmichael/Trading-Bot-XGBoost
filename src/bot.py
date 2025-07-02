@@ -42,7 +42,7 @@ and assumes the presence of:
 - A feature builder function (`build_features`) compatible with your model inputs
 """
 
-
+TEST_MODE = True  # Set to False after testing
 actions = User_Actions()
 
 # --- Config ---
@@ -130,10 +130,31 @@ def run_trading_bot(classifier, regressor, clf_threshold=0.58, reg_threshold=0.0
                 trade = active_trades.get(symbol)
                 is_active = symbol in position_symbols and trade is not None
                 
+                if TEST_MODE:
+                    try:
+                        current_price = price.iloc[0]
+                        qty = int((cash * 0.1) // current_price)
+                        if qty > 0:
+                            print(f"Placing test trade for {symbol}: BUY {qty} shares at {current_price}")
+                            actions.submit_order(symbol, qty, side='buy')
+                            log_trade(symbol, "buy", current_price, qty, reason="manual_test", direction="long")
+                            logging.info(f"Test trade placed: {symbol} BUY {qty} @ {current_price}")
+                        else:
+                            print("Not enough cash for test trade.")
+                    except Exception as e:
+                        logging.exception(f"Test trade failed for {symbol}: {e}")
+                    return  # Stop the bot after test
 
                 # --- Entry Logic ---
                 if not is_active:
-                    qty = int((cash * 0.1) // price.iloc[0])
+                    try:
+                        current_price = price.iloc[0]
+                    except Exception as e:
+                        logging.warning(f"Failed to extract price for {symbol}: {e}")
+                        continue
+
+
+                    qty = int((cash * 0.1) // current_price)  # 10% of cash per trade
                     if qty <= 0:
                         continue
 

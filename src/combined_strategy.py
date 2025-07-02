@@ -138,7 +138,7 @@ plt.tight_layout()
 plt.show()
 
 plt.figure(figsize=(10, 4))
-plt.hist(clf_probs, bins=50, alpha=0.6, label='Classifier Probabilities')
+plt.hist(clf_probs, bins=50, alpha=0.6, label='Number predicted')
 plt.axvline(clf_threshold, color='red', linestyle='--', label='Long Threshold')
 plt.axvline(0.23, color='purple', linestyle='--', label='Short Threshold')
 plt.title("Classifier Probability Distribution")
