@@ -89,7 +89,7 @@ def run_trading_bot(classifier, regressor, clf_threshold=0.58, reg_threshold=0.0
             watchlist = actions.get_watchlist_symbols()
             prices = actions.get_prices(watchlist)
             raw_positions = actions.get_positions()
-            position_symbols = {pos['symbol'] for pos in raw_positions}
+            position_symbols = set(raw_positions)
             cash = float(actions.get_cash_balance())
 
             print(f"Watchlist: {watchlist}, Cash: {cash}")
