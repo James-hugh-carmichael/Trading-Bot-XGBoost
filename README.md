@@ -1,70 +1,80 @@
-> Trading Bot with XGBoost Classifier & Regressor
+# Trading Bot with XGBoost Classifier & Regressor
 
-This repository contains a Python-based trading bot that uses machine learning models (XGBoost classifier and regressor) to predict stock price movements and execute trades based on these predictions.
+A Python-based trading bot that uses machine learning (XGBoost classification and regression models) to predict stock price movements and execute trades automatically via the Alpaca API.
 
-> Features
-- Feature engineering with technical indicators and rolling statistics
-- Classification and regression models trained on historical stock data
-- Trade signal generation for long and short positions
-- Performance evaluation with cumulative returns and win rate
-- Visualization of model predictions and feature importance
+---
 
-> Getting Started
+## Features
 
-**Requirements**
+- **Feature engineering**: technical indicators and rolling statistics computed from historical price data
+- **Dual ML models**: XGBoost classifier (direction) and regressor (magnitude) trained on historical stock data
+- **Trade signal generation**: automated long and short position signals
+- **Performance evaluation**: cumulative returns, win rate, and other key metrics
+- **Visualization**: model predictions and feature importance plots
+
+---
+
+## Getting Started
+
+### Requirements
+
 - Python 3.8+
-- pandas
-- numpy
-- matplotlib
-- xgboost
-- ta (technical analysis library)
-- joblib
-- yfinance
-- alpaca-trade-api
+- `pandas`
+- `numpy`
+- `matplotlib`
+- `xgboost`
+- `ta` (technical analysis library)
+- `joblib`
+- `yfinance`
+- `alpaca-trade-api`
 
-Install dependencies with:
+### Installation
+
+```bash
 pip install -r requirements.txt
+```
 
-> Alpaca API Setup
+---
 
-Sign up for Alpaca
-Register at Alpaca to create an account and get your API key and secret. You can use the free paper trading environment for testing.
+## Alpaca API Setup
 
-Configure your API keys
-Set your API credentials as environment variables to keep them secure:
+### 1. Sign up for Alpaca
 
+Register at [Alpaca](https://alpaca.markets/) to create an account and get your API key and secret. The free paper trading environment is recommended for testing.
+
+### 2. Configure your API keys
+
+Set your credentials as environment variables to keep them secure:
+
+```bash
 export APCA_API_KEY_ID='your_api_key'
 export APCA_API_SECRET_KEY='your_secret_key'
-export APCA_API_BASE_URL='https://paper-api.alpaca.markets' # For paper trading
+export APCA_API_BASE_URL='https://paper-api.alpaca.markets'  # Paper trading endpoint
+```
 
-Alternatively, you can store them in a local config file or use a secrets manager. Do not commit your keys to version control.
+> Alternatively, store credentials in a local config file or a secrets manager. **Never commit your keys to version control.**
 
-Verify connectivity
-Before running the bot, ensure you can connect and authenticate with Alpaca via a simple test script or your trading bot's initial connection.
+### 3. Verify connectivity
 
-> Running the Bot
-Run the data loader and data processor, then run the ML model generators. 
+Before running the bot, confirm you can connect and authenticate with Alpaca using a simple test script or the bot's initial connection routine.
 
-Run the trading bot main script:
+---
+
+## Running the Bot
+
+1. Run the data loader and data processor
+2. Run the ML model generators (classifier + regressor)
+3. Run the main trading script:
+
+```bash
 python main.py
-Logs will be written to bot.log and executed trades will be recorded in trade_log.csv.
+```
 
-> Repository Structure
-- src/             # Source code for bot, strategy, and API interactions
-- models/          # Saved ML models (XGBoost classifier and regressor)
-- data/            # Training and historical data
-- trade_log.csv    # CSV file where trades are logged (generated at runtime)
-- bot.log          # Runtime logs
+Logs are written to `bot.log`, and executed trades are recorded in `trade_log.csv`.
 
-> Security Notice
+---
 
-Never commit your API keys or any sensitive credentials to GitHub.
 
-Use .gitignore to exclude any files or folders containing secrets or credentials.
+## Disclaimer
 
-Recommended .gitignore entries:
-
-- *.env
-- __pycache__/
-- *.pyc
-- bot.log
+This project is for educational purposes only and does not constitute financial advice. Trading involves risk, and past performance is not indicative of future results. Use at your own risk, and always test thoroughly in a paper trading environment before deploying with real funds.
